@@ -61,7 +61,13 @@ In your `application.js` file, add the following require at the top:
 ```
 //= require app_bundle
 ```
-If you have used `require_tree .` and relinquished control over file loading order, this could be a problem. You may need to remove that file and require each JS file by name and in the proper order.
+If you have used `require_tree .` and relinquished control over file loading order, you may encounter problems. If that happens, remove that line and require each JS file by name and in the proper order.
+
+## Add your React component
+
+{ Fill this in! Multiple components per page.}
+
+##
 
 
 * gitignore node_modules
