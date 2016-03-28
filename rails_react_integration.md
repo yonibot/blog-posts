@@ -48,13 +48,19 @@ module.exports = {
 };
 ```
 
-We've added a single loader - Babel - to process our ES6 as well as our React inline Javascript syntax (jsx), and we tell it to exclude `node_modules` as that would just be a waste of time. The `resolve.extensions` section tells Webpack which file types should be processed, and the rest is simply telling Webpack the location of an entry Javascript file and where to spit out the bundle. However, our Babel loader and plugins must be installed via npm:
+We've added a single loader - Babel - to process our ES6 as well as our React inline Javascript (jsx), and we tell it to exclude `node_modules` as that would just be a waste of time. The `resolve.extensions` section tells Webpack which file types should be processed (the blank string ('') tells Webpack to require modules as well as files), and the rest tells Webpack the location of an entry Javascript file and where to spit out the bundle.
+
+### Using External Dependencies
+
+To use this configuration, we must install the Babel loader and the plugins. Now that we have a *package.json* file, we are free to use npm to install any external dependencies that we want:
 
 * ```npm install --save babel-loader babel-core babel-preset-react babel-preset-stage-0 babel-preset-es2015```
 
-Test this out now by typing `webpack` in the terminal at the root of your app, and your JS bundle should be produced at the filepath that you provided.
+Test the current configuration by typing `webpack` in the terminal at the root of your app, and your JS bundle should be produced at the filepath that you provided.
 
-## Add the JS bundle to your build path
+The reason that I use the `--save` flag rather than `--save-dev` is that by default, npm does not install devDependencies on production. If you'd like to use devDependencies anyway, you can disable production mode for npm by running `heroku config:set NPM_CONFIG_PRODUCTION=false`.
+
+### Add the JS bundle to your build path
 
 In your `application.js` file, add the following require at the top:
 
@@ -67,7 +73,40 @@ If you have used `require_tree .` and relinquished control over file loading ord
 
 { Fill this in! Multiple components per page.}
 
-##
+## Deploying to Heroku
+
+I used the [Heroku Multi Buildpack](https://github.com/ddollar/heroku-buildpack-multi) by David Dollar, which enables you to run multiple Heroku buildpacks on deploy:
+
+* `heroku buildpacks:set https://github.com/ddollar/heroku-buildpack-multi.git`
+
+Then add your specific buildpacks to a `.buildpacks` file:
+```
+https://github.com/heroku/heroku-buildpack-nodejs
+https://github.com/heroku/heroku-buildpack-ruby
+```
+
+Using the post-install script option in `package.json`, we will have webpack generate our bundle before the Rails buildpack wakes up:
+
+```
+  ...
+  ,
+  "scripts": {
+    "postinstall": "webpack --config webpack.config.js"
+  }
+
+```
+
+
+
+## Bonuses
+
+At this point, the integration is technically complete. One problem that remains is that we still need to issue the `webpack` command every time we want to reload our React code. Recall that Rails loads all of the code on every refresh in the development environment). We can get the same functionality by using the Webpack-dev-server, which watches for changes to our front-end code and runs `webpack` for us every time a change is perceived.
+
+### Webpack Dev Server
+
+{Add this}
+
+### Bootstrap
 
 
 * gitignore node_modules
