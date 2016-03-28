@@ -104,7 +104,21 @@ At this point, the integration is technically complete. One problem that remains
 
 ### Webpack Dev Server
 
-{Add this}
+First let's install the Foreman gem, which allows multiple processes to be initialized using a single Procfile.
+
+```
+gem 'foreman', group: :development
+```
+
+My Procfile instantiates a Webpack-dev-server, Rails server (we run Puma), and Sidekiq to handle background jobs. Create a `Procfile.dev` at the root of your app and list each initialization command one after the next. The key will be used by Foreman to identify each process:
+
+```
+# Load webpack and watch changes using webpack-dev-server
+webpack: webpack -wc --config webpack.config.js
+
+web: bundle exec puma -C config/puma.rb
+worker: bundle exec sidekiq -q default -q mailers
+```
 
 ### Bootstrap
 
